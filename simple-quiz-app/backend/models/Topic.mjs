@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const topicSchema = new mongoose.Schema({
   name: {
@@ -25,4 +25,4 @@ const topicSchema = new mongoose.Schema({
 
 topicSchema.index({ isActive: 1 });
 
-module.exports = mongoose.model('Topic', topicSchema);
+export default mongoose.model('Topic', topicSchema);

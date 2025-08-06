@@ -1,15 +1,17 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
-require('dotenv').config();
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import dotenv from 'dotenv';
 
-const authRoutes = require('./routes/auth');
-const userRoutes = require('./routes/users');
-const quizRoutes = require('./routes/quiz');
-const analyticsRoutes = require('./routes/analytics');
-const errorHandler = require('./middleware/errorHandler');
+import authRoutes from './routes/auth.mjs';
+import userRoutes from './routes/users.mjs';
+import quizRoutes from './routes/quiz.mjs';
+import analyticsRoutes from './routes/analytics.mjs';
+import errorHandler from './middleware/errorHandler.mjs';
+
+dotenv.config();
 
 const app = express();
 
@@ -66,4 +68,4 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-module.exports = app;
+export default app;

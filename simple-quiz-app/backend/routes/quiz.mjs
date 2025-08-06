@@ -1,7 +1,7 @@
-const express = require('express');
-const quizController = require('../controllers/quizController');
-const authMiddleware = require('../middleware/auth');
-const { validateQuizStart, validateAnswerSubmission } = require('../middleware/validation');
+import express from 'express';
+import quizController from '../controllers/quizController.mjs';
+import authMiddleware from '../middleware/auth.mjs';
+import { validateQuizStart, validateAnswerSubmission } from '../middleware/validation.mjs';
 
 const router = express.Router();
 
@@ -12,4 +12,4 @@ router.post('/start', validateQuizStart, quizController.startQuiz);
 router.post('/submit-answer', validateAnswerSubmission, quizController.submitAnswer);
 router.post('/complete', quizController.completeQuiz);
 
-module.exports = router;
+export default router;

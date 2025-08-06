@@ -2,11 +2,12 @@
   "name": "quiz-app-backend",
   "version": "1.0.0",
   "description": "Quiz Application Backend API",
-  "main": "server.js",
+  "type": "module",
+  "main": "server.mjs",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
-    "standalone": "node server-standalone.js",
+    "start": "node server.mjs",
+    "dev": "nodemon server.mjs",
+    "standalone": "node server-standalone.mjs",
     "test": "jest",
     "audit-fix": "npm audit fix"
   },

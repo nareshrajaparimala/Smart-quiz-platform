@@ -1,8 +1,9 @@
-const mongoose = require('mongoose');
-require('dotenv').config({ path: '../backend/.env' });
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import Topic from '../backend/models/Topic.mjs';
+import Question from '../backend/models/Question.mjs';
 
-const Topic = require('../backend/models/Topic');
-const Question = require('../backend/models/Question');
+dotenv.config({ path: '../backend/.env' });
 
 const topics = [
   { name: 'General Knowledge', description: 'Test your general knowledge' },

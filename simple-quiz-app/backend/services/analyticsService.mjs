@@ -1,6 +1,6 @@
-const QuizAttempt = require('../models/QuizAttempt');
-const QuestionResponse = require('../models/QuestionResponse');
-const Topic = require('../models/Topic');
+import QuizAttempt from '../models/QuizAttempt.mjs';
+import QuestionResponse from '../models/QuestionResponse.mjs';
+import Topic from '../models/Topic.mjs';
 
 class AnalyticsService {
   async getDashboardAnalytics(userId) {
@@ -247,4 +247,4 @@ class AnalyticsService {
   }
 }
 
-module.exports = new AnalyticsService();
+export default new AnalyticsService();

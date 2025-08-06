@@ -1,4 +1,4 @@
-const { body, validationResult } = require('express-validator');
+import { body, validationResult } from 'express-validator';
 
 const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
@@ -63,7 +63,7 @@ const validateAnswerSubmission = [
   handleValidationErrors
 ];
 
-module.exports = {
+export {
   validateRegistration,
   validateLogin,
   validateQuizStart,

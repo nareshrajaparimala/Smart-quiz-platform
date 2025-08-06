@@ -1,8 +1,9 @@
-const Topic = require('../models/Topic');
-const Question = require('../models/Question');
-const QuizAttempt = require('../models/QuizAttempt');
-const QuestionResponse = require('../models/QuestionResponse');
-const User = require('../models/User');
+import Topic from '../models/Topic.mjs';
+import Question from '../models/Question.mjs';
+import QuizAttempt from '../models/QuizAttempt.mjs';
+import QuestionResponse from '../models/QuestionResponse.mjs';
+import User from '../models/User.mjs';
+import mongoose from 'mongoose';
 
 class QuizService {
   async getTopics(userId) {
@@ -36,7 +37,7 @@ class QuizService {
   }
 
   async startQuiz(userId, topicId) {
-    const mongoose = require('mongoose');
+
     const objectId = new mongoose.Types.ObjectId(topicId);
     
     // Check if user can take this quiz
@@ -242,4 +243,4 @@ class QuizService {
   }
 }
 
-module.exports = new QuizService();
+export default new QuizService();

@@ -1,7 +1,7 @@
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-const User = require('../models/User');
-const emailService = require('./emailService');
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+import User from '../models/User.mjs';
+import emailService from './emailService.mjs';
 
 class AuthService {
   generateToken(userId) {
@@ -100,4 +100,4 @@ class AuthService {
   }
 }
 
-module.exports = new AuthService();
+export default new AuthService();

@@ -1,4 +1,4 @@
-const analyticsService = require('../services/analyticsService');
+import analyticsService from '../services/analyticsService.mjs';
 
 class AnalyticsController {
   async getDashboard(req, res, next) {
@@ -53,4 +53,4 @@ class AnalyticsController {
   }
 }
 
-module.exports = new AnalyticsController();
+export default new AnalyticsController();

@@ -1,4 +1,4 @@
-const quizService = require('../services/quizService');
+import quizService from '../services/quizService.mjs';
 
 class QuizController {
   async getTopics(req, res, next) {
@@ -86,4 +86,4 @@ class QuizController {
   }
 }
 
-module.exports = new QuizController();
+export default new QuizController();

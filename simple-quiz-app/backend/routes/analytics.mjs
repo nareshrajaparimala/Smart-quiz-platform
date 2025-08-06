@@ -1,6 +1,6 @@
-const express = require('express');
-const analyticsController = require('../controllers/analyticsController');
-const authMiddleware = require('../middleware/auth');
+import express from 'express';
+import analyticsController from '../controllers/analyticsController.mjs';
+import authMiddleware from '../middleware/auth.mjs';
 
 const router = express.Router();
 
@@ -10,4 +10,4 @@ router.get('/dashboard', analyticsController.getDashboard);
 router.get('/question-performance', analyticsController.getQuestionPerformance);
 router.get('/export', analyticsController.exportReport);
 
-module.exports = router;
+export default router;

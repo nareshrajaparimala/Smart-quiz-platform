@@ -1,6 +1,6 @@
-const express = require('express');
-const authMiddleware = require('../middleware/auth');
-const authService = require('../services/authService');
+import express from 'express';
+import authMiddleware from '../middleware/auth.mjs';
+import authService from '../services/authService.mjs';
 
 const router = express.Router();
 
@@ -35,4 +35,4 @@ router.post('/validate-id', async (req, res, next) => {
   }
 });
 
-module.exports = router;
+export default router;

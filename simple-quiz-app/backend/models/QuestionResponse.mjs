@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const questionResponseSchema = new mongoose.Schema({
   userId: {
@@ -45,4 +45,4 @@ questionResponseSchema.index({ quizAttemptId: 1 });
 questionResponseSchema.index({ questionId: 1 });
 questionResponseSchema.index({ userId: 1, questionId: 1 });
 
-module.exports = mongoose.model('QuestionResponse', questionResponseSchema);
+export default mongoose.model('QuestionResponse', questionResponseSchema);
