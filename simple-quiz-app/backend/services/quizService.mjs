@@ -228,19 +228,34 @@ class QuizService {
       { retentionExpiry: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) }
     );
 
-    // Prepare question review
+    // Prepare question review using shuffled question data
     const questionReview = await Promise.all(
       quizAttempt.questions.map(async (question) => {
         const response = responses.find(r => r.questionId.toString() === question._id.toString());
-        return {
-          questionId: question._id,
-          questionText: question.questionText,
-          options: question.options,
-          correctAnswerIndex: question.correctAnswerIndex,
-          userAnswerIndex: response?.selectedAnswerIndex || null,
-          isCorrect: response?.isCorrect || false,
-          responseTime: response?.responseTime || 20
-        };
+        const shuffledQuestion = quizAttempt.shuffledQuestions?.find(q => q._id.toString() === question._id.toString());
+        
+        if (shuffledQuestion) {
+          return {
+            questionId: question._id,
+            questionText: shuffledQuestion.questionText,
+            options: shuffledQuestion.options,
+            correctAnswerIndex: shuffledQuestion.correctAnswerIndex,
+            userAnswerIndex: response?.selectedAnswerIndex || null,
+            isCorrect: response?.isCorrect || false,
+            responseTime: response?.responseTime || 20
+          };
+        } else {
+          // Fallback to original question data
+          return {
+            questionId: question._id,
+            questionText: question.questionText,
+            options: question.options,
+            correctAnswerIndex: question.correctAnswerIndex,
+            userAnswerIndex: response?.selectedAnswerIndex || null,
+            isCorrect: response?.isCorrect || false,
+            responseTime: response?.responseTime || 20
+          };
+        }
       })
     );
 
