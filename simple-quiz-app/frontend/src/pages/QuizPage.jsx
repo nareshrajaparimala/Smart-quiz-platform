@@ -40,6 +40,24 @@ const QuizPage = () => {
   const currentQuestion = quizData?.questions?.[currentQuestionIndex]
   const progress = ((currentQuestionIndex + 1) / (quizData?.totalQuestions || 10)) * 100
 
+  const handleTimeUp = useCallback(async () => {
+    if (isSubmitting || showFeedback) return
+    
+    setIsSubmitting(true)
+    try {
+      await submitAnswer(null, 20)
+    } catch (error) {
+      console.error('Timeout submission error:', error)
+      // Move to next question even if there's an error
+      setShowFeedback(true)
+      setTimeout(() => {
+        setShowFeedback(false)
+        setCurrentQuestionIndex(prev => prev + 1)
+      }, 1000)
+    }
+    setIsSubmitting(false)
+  }, [isSubmitting, showFeedback, submitAnswer])
+
   // Timer effect
   useEffect(() => {
     if (!currentQuestion || isSubmitting || showFeedback) return
@@ -63,24 +81,6 @@ const QuizPage = () => {
     setSelectedAnswer('')
   }, [currentQuestionIndex])
 
-  const handleTimeUp = useCallback(async () => {
-    if (isSubmitting || showFeedback) return
-    
-    setIsSubmitting(true)
-    try {
-      await submitAnswer(null, 20)
-    } catch (error) {
-      console.error('Timeout submission error:', error)
-      // Move to next question even if there's an error
-      setShowFeedback(true)
-      setTimeout(() => {
-        setShowFeedback(false)
-        setCurrentQuestionIndex(prev => prev + 1)
-      }, 1000)
-    }
-    setIsSubmitting(false)
-  }, [isSubmitting, showFeedback])
-
   const handleAnswerSubmit = async () => {
     if (selectedAnswer === '' || isSubmitting) return
     
@@ -93,7 +93,7 @@ const QuizPage = () => {
     setIsSubmitting(false)
   }
 
-  const submitAnswer = async (answerIndex, responseTime) => {
+  const submitAnswer = useCallback(async (answerIndex, responseTime) => {
     try {
       const response = await quizService.submitAnswer({
         quizAttemptId: quizData.quizAttemptId,
@@ -136,7 +136,7 @@ const QuizPage = () => {
     } catch (error) {
       throw error
     }
-  }
+  }, [quizData, currentQuestion, currentQuestionIndex, navigate])
 
   const handleExit = () => {
     setShowExitDialog(true)
