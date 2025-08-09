@@ -222,7 +222,7 @@ const QuizPage = () => {
                       }
                     }}
                   />
-                ))
+                ))}
               </RadioGroup>
             </FormControl>
 
