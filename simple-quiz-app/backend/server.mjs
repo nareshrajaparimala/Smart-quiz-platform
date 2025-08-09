@@ -19,7 +19,7 @@ const app = express();
 app.use(helmet());
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://animated-cuchufli-fe19cc.netlify.app', 'https://quizapp.com', 'https://www.quizapp.com']
+    ? ['https://smart-quiz-web.netlify.app', 'https://animated-cuchufli-fe19cc.netlify.app', 'https://quizapp.com', 'https://www.quizapp.com']
     : ['http://localhost:3000', 'http://localhost:3001'],
   credentials: true
 }));
