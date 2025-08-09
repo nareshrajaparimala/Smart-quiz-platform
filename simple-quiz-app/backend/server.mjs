@@ -9,6 +9,7 @@ import authRoutes from './routes/auth.mjs';
 import userRoutes from './routes/users.mjs';
 import quizRoutes from './routes/quiz.mjs';
 import analyticsRoutes from './routes/analytics.mjs';
+import adminRoutes from './routes/admin.mjs';
 import errorHandler from './middleware/errorHandler.mjs';
 
 dotenv.config();
@@ -46,6 +47,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/quiz', quizRoutes);
 app.use('/api/v1/analytics', analyticsRoutes);
+app.use('/api/v1/admin', adminRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
