@@ -65,8 +65,8 @@ class QuizService {
         throw new Error('INSUFFICIENT_QUESTIONS');
       }
       
-      // Use all available questions without repeating
-      questions.splice(0, questions.length, ...allQuestions);
+      // Use all available questions
+      questions.splice(0, questions.length, ...allQuestions.slice(0, 10));
     }
 
     // Create quiz attempt
@@ -107,7 +107,7 @@ class QuizService {
       quizAttemptId: quizAttempt._id,
       topicName: topic.name,
       questions: questionsWithRandomizedOptions,
-      totalQuestions: questions.length,
+      totalQuestions: 10,
       timePerQuestion: 20,
       attemptNumber: quizAttempt.attemptNumber
     };
@@ -149,7 +149,7 @@ class QuizService {
     const currentQuestionIndex = quizAttempt.questions.findIndex(q => q.toString() === questionId);
     const nextQuestionIndex = currentQuestionIndex + 1;
 
-    if (totalResponses >= quizAttempt.questions.length || nextQuestionIndex >= quizAttempt.questions.length) {
+    if (totalResponses >= 10 || nextQuestionIndex >= quizAttempt.questions.length) {
       return await this.completeQuiz(userId, quizAttemptId);
     }
 
@@ -168,7 +168,7 @@ class QuizService {
       },
       progress: {
         currentQuestion: nextQuestionIndex + 1,
-        totalQuestions: quizAttempt.questions.length
+        totalQuestions: 10
       }
     };
   }
