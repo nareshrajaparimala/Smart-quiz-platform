@@ -70,7 +70,8 @@ const QuizPage = () => {
     try {
       await submitAnswer(null, 20)
     } catch (error) {
-      toast.error('Failed to submit answer')
+      console.error('Timeout submission error:', error)
+      // Don't show error toast for timeout - it's expected behavior
     }
     setIsSubmitting(false)
   }

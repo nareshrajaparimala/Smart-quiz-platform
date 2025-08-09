@@ -134,7 +134,7 @@ class QuizService {
       throw new Error('QUESTION_NOT_FOUND');
     }
 
-    const isCorrect = selectedAnswerIndex === shuffledQuestion.correctAnswerIndex;
+    const isCorrect = selectedAnswerIndex !== null && selectedAnswerIndex === shuffledQuestion.correctAnswerIndex;
     const wasAttempted = selectedAnswerIndex !== null && responseTime < 20;
 
     // Save response
