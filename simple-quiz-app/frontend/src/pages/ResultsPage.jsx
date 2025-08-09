@@ -306,16 +306,17 @@ const ResultsPage = () => {
                                 borderRadius: 1,
                                 backgroundColor: 
                                   optionIndex === question.correctAnswerIndex
-                                    ? 'success.light'
-                                    : optionIndex === question.userAnswerIndex && !question.isCorrect
-                                    ? 'error.light'
+                                    ? '#e8f5e8'
+                                    : optionIndex === question.userAnswerIndex && question.userAnswerIndex !== question.correctAnswerIndex
+                                    ? '#ffebee'
                                     : 'transparent',
-                                color:
+                                border:
                                   optionIndex === question.correctAnswerIndex
-                                    ? 'success.contrastText'
-                                    : optionIndex === question.userAnswerIndex && !question.isCorrect
-                                    ? 'error.contrastText'
-                                    : 'text.primary'
+                                    ? '1px solid #4caf50'
+                                    : optionIndex === question.userAnswerIndex && question.userAnswerIndex !== question.correctAnswerIndex
+                                    ? '1px solid #f44336'
+                                    : '1px solid transparent',
+                                color: 'text.primary'
                               }}
                             >
                               {String.fromCharCode(65 + optionIndex)}. {option}

@@ -204,40 +204,25 @@ const QuizPage = () => {
                 value={selectedAnswer}
                 onChange={(e) => setSelectedAnswer(e.target.value)}
               >
-                {currentQuestion.options.map((option, index) => {
-                  let backgroundColor = 'transparent'
-                  let borderColor = '#e0e0e0'
-                  
-                  if (showFeedback && lastAnswerResult) {
-                    if (index === lastAnswerResult.correctIndex) {
-                      backgroundColor = '#e8f5e8'
-                      borderColor = '#4caf50'
-                    } else if (index === lastAnswerResult.selectedIndex && !lastAnswerResult.isCorrect) {
-                      backgroundColor = '#ffebee'
-                      borderColor = '#f44336'
-                    }
-                  }
-                  
-                  return (
-                    <FormControlLabel
-                      key={index}
-                      value={index.toString()}
-                      control={<Radio />}
-                      label={option}
-                      disabled={showFeedback}
-                      sx={{ 
-                        mb: 1,
-                        p: 2,
-                        border: `1px solid ${borderColor}`,
-                        borderRadius: 1,
-                        backgroundColor,
-                        '&:hover': {
-                          backgroundColor: showFeedback ? backgroundColor : '#f5f5f5'
-                        }
-                      }}
-                    />
-                  )
-                })}
+                {currentQuestion.options.map((option, index) => (
+                  <FormControlLabel
+                    key={index}
+                    value={index.toString()}
+                    control={<Radio />}
+                    label={option}
+                    disabled={showFeedback}
+                    sx={{ 
+                      mb: 1,
+                      p: 2,
+                      border: '1px solid #e0e0e0',
+                      borderRadius: 1,
+                      backgroundColor: 'transparent',
+                      '&:hover': {
+                        backgroundColor: '#f5f5f5'
+                      }
+                    }}
+                  />
+                ))
               </RadioGroup>
             </FormControl>
 
