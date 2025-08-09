@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://smart-quiz-web-5sht.onrender.com/api/v1'
 
 // Create axios instance
 const api = axios.create({
