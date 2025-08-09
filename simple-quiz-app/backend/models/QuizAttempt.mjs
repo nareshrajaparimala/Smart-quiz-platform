@@ -15,6 +15,15 @@ const quizAttemptSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Question'
   }],
+  shuffledQuestions: [{
+    _id: mongoose.Schema.Types.ObjectId,
+    questionText: String,
+    options: [String],
+    correctAnswerIndex: Number,
+    originalCorrectIndex: Number,
+    mediaUrl: String,
+    mediaType: String
+  }],
   startedAt: {
     type: Date,
     default: Date.now

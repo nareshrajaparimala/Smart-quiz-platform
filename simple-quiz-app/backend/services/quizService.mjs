@@ -69,15 +69,6 @@ class QuizService {
       questions.splice(0, questions.length, ...allQuestions.slice(0, 10));
     }
 
-    // Create quiz attempt
-    const quizAttempt = new QuizAttempt({
-      userId,
-      topicId: objectId,
-      questions: questions.map(q => q._id),
-      attemptNumber: attempts.length + 1
-    });
-    await quizAttempt.save();
-
     // Randomize answer options for each question
     const questionsWithRandomizedOptions = questions.map(q => {
       const options = [...q.options];
@@ -96,10 +87,21 @@ class QuizService {
         questionText: q.questionText,
         options,
         correctAnswerIndex: newCorrectIndex,
+        originalCorrectIndex: q.correctAnswerIndex,
         mediaUrl: q.mediaUrl,
         mediaType: q.mediaType
       };
     });
+
+    // Create quiz attempt with shuffled question data
+    const quizAttempt = new QuizAttempt({
+      userId,
+      topicId: objectId,
+      questions: questions.map(q => q._id),
+      shuffledQuestions: questionsWithRandomizedOptions,
+      attemptNumber: attempts.length + 1
+    });
+    await quizAttempt.save();
 
     const topic = await Topic.findById(objectId);
     
@@ -124,12 +126,15 @@ class QuizService {
       throw new Error('QUIZ_NOT_FOUND');
     }
 
-    const question = await Question.findById(questionId);
-    if (!question) {
+    // Find the shuffled question data
+    const shuffledQuestion = quizAttempt.shuffledQuestions?.find(q => q._id.toString() === questionId) || 
+                            await Question.findById(questionId);
+    
+    if (!shuffledQuestion) {
       throw new Error('QUESTION_NOT_FOUND');
     }
 
-    const isCorrect = selectedAnswerIndex === question.correctAnswerIndex;
+    const isCorrect = selectedAnswerIndex === shuffledQuestion.correctAnswerIndex;
     const wasAttempted = selectedAnswerIndex !== null && responseTime < 20;
 
     // Save response
