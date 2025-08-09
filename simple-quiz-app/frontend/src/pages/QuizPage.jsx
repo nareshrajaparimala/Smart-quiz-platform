@@ -40,24 +40,6 @@ const QuizPage = () => {
   const currentQuestion = quizData?.questions?.[currentQuestionIndex]
   const progress = ((currentQuestionIndex + 1) / (quizData?.totalQuestions || 10)) * 100
 
-  const handleTimeUp = useCallback(async () => {
-    if (isSubmitting || showFeedback) return
-    
-    setIsSubmitting(true)
-    try {
-      await submitAnswer(null, 20)
-    } catch (error) {
-      console.error('Timeout submission error:', error)
-      // Move to next question even if there's an error
-      setShowFeedback(true)
-      setTimeout(() => {
-        setShowFeedback(false)
-        setCurrentQuestionIndex(prev => prev + 1)
-      }, 1000)
-    }
-    setIsSubmitting(false)
-  }, [isSubmitting, showFeedback, submitAnswer])
-
   // Timer effect
   useEffect(() => {
     if (!currentQuestion || isSubmitting || showFeedback) return
@@ -65,7 +47,22 @@ const QuizPage = () => {
     const timer = setInterval(() => {
       setTimeRemaining((prev) => {
         if (prev <= 1) {
-          handleTimeUp()
+          // Handle timeout directly in effect
+          if (!isSubmitting && !showFeedback) {
+            setIsSubmitting(true)
+            quizService.submitAnswer({
+              quizAttemptId: quizData.quizAttemptId,
+              questionId: currentQuestion._id,
+              selectedAnswerIndex: null,
+              responseTime: 20
+            }).then(() => {
+              setCurrentQuestionIndex(prev => prev + 1)
+              setIsSubmitting(false)
+            }).catch(() => {
+              setCurrentQuestionIndex(prev => prev + 1)
+              setIsSubmitting(false)
+            })
+          }
           return 0
         }
         return prev - 1
@@ -73,7 +70,7 @@ const QuizPage = () => {
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [currentQuestionIndex, isSubmitting, showFeedback, handleTimeUp])
+  }, [currentQuestionIndex, isSubmitting, showFeedback, quizData, currentQuestion])
 
   // Reset timer for new question
   useEffect(() => {
@@ -93,7 +90,7 @@ const QuizPage = () => {
     setIsSubmitting(false)
   }
 
-  const submitAnswer = useCallback(async (answerIndex, responseTime) => {
+  const submitAnswer = async (answerIndex, responseTime) => {
     try {
       const response = await quizService.submitAnswer({
         quizAttemptId: quizData.quizAttemptId,
@@ -136,7 +133,7 @@ const QuizPage = () => {
     } catch (error) {
       throw error
     }
-  }, [quizData, currentQuestion, currentQuestionIndex, navigate])
+  }
 
   const handleExit = () => {
     setShowExitDialog(true)
@@ -147,10 +144,21 @@ const QuizPage = () => {
     toast('Quiz abandoned. Progress was not saved.', { icon: '⚠️' })
   }
 
-  if (!quizData || !currentQuestion) {
+  if (!quizData) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
-        <Typography>Loading quiz...</Typography>
+        <Typography>Loading quiz data...</Typography>
+      </Box>
+    )
+  }
+
+  if (!currentQuestion) {
+    console.log('Quiz data:', quizData)
+    console.log('Current question index:', currentQuestionIndex)
+    console.log('Questions array:', quizData.questions)
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
+        <Typography>Loading question...</Typography>
       </Box>
     )
   }
