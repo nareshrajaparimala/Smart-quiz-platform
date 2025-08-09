@@ -59,22 +59,14 @@ class QuizService {
     ]);
 
     if (questions.length < 10) {
-      // If we don't have enough questions, get all available and repeat some
+      // If we don't have enough questions, get all available
       const allQuestions = await Question.find({ topicId: objectId, isActive: true });
       if (allQuestions.length === 0) {
         throw new Error('INSUFFICIENT_QUESTIONS');
       }
       
-      // Use all available questions
-      const finalQuestions = [...allQuestions];
-      
-      // If we still need more, repeat some randomly
-      while (finalQuestions.length < 10) {
-        const randomIndex = Math.floor(Math.random() * allQuestions.length);
-        finalQuestions.push(allQuestions[randomIndex]);
-      }
-      
-      questions.splice(0, questions.length, ...finalQuestions.slice(0, 10));
+      // Use all available questions without repeating
+      questions.splice(0, questions.length, ...allQuestions);
     }
 
     // Create quiz attempt
@@ -115,7 +107,7 @@ class QuizService {
       quizAttemptId: quizAttempt._id,
       topicName: topic.name,
       questions: questionsWithRandomizedOptions,
-      totalQuestions: 10,
+      totalQuestions: questions.length,
       timePerQuestion: 20,
       attemptNumber: quizAttempt.attemptNumber
     };
@@ -157,7 +149,7 @@ class QuizService {
     const currentQuestionIndex = quizAttempt.questions.findIndex(q => q.toString() === questionId);
     const nextQuestionIndex = currentQuestionIndex + 1;
 
-    if (totalResponses >= 10 || nextQuestionIndex >= quizAttempt.questions.length) {
+    if (totalResponses >= quizAttempt.questions.length || nextQuestionIndex >= quizAttempt.questions.length) {
       return await this.completeQuiz(userId, quizAttemptId);
     }
 
@@ -176,7 +168,7 @@ class QuizService {
       },
       progress: {
         currentQuestion: nextQuestionIndex + 1,
-        totalQuestions: 10
+        totalQuestions: quizAttempt.questions.length
       }
     };
   }
