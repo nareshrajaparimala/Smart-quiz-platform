@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
   Box,
@@ -42,7 +42,7 @@ const QuizPage = () => {
 
   // Timer effect
   useEffect(() => {
-    if (!currentQuestion || isSubmitting) return
+    if (!currentQuestion || isSubmitting || showFeedback) return
 
     const timer = setInterval(() => {
       setTimeRemaining((prev) => {
@@ -55,7 +55,7 @@ const QuizPage = () => {
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [currentQuestionIndex, isSubmitting])
+  }, [currentQuestionIndex, isSubmitting, showFeedback, handleTimeUp])
 
   // Reset timer for new question
   useEffect(() => {
@@ -63,18 +63,23 @@ const QuizPage = () => {
     setSelectedAnswer('')
   }, [currentQuestionIndex])
 
-  const handleTimeUp = async () => {
-    if (isSubmitting) return
+  const handleTimeUp = useCallback(async () => {
+    if (isSubmitting || showFeedback) return
     
     setIsSubmitting(true)
     try {
       await submitAnswer(null, 20)
     } catch (error) {
       console.error('Timeout submission error:', error)
-      // Don't show error toast for timeout - it's expected behavior
+      // Move to next question even if there's an error
+      setShowFeedback(true)
+      setTimeout(() => {
+        setShowFeedback(false)
+        setCurrentQuestionIndex(prev => prev + 1)
+      }, 1000)
     }
     setIsSubmitting(false)
-  }
+  }, [isSubmitting, showFeedback])
 
   const handleAnswerSubmit = async () => {
     if (selectedAnswer === '' || isSubmitting) return
