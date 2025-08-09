@@ -158,18 +158,39 @@ class QuizService {
       return await this.completeQuiz(userId, quizAttemptId);
     }
 
-    // Get next question
+    // Get next question from shuffled data
     const nextQuestionId = quizAttempt.questions[nextQuestionIndex];
-    const nextQuestion = await Question.findById(nextQuestionId);
+    const nextShuffledQuestion = quizAttempt.shuffledQuestions?.find(q => q._id.toString() === nextQuestionId.toString());
+    
+    if (!nextShuffledQuestion) {
+      // Fallback to original question if shuffled data not found
+      const nextQuestion = await Question.findById(nextQuestionId);
+      return {
+        isCorrect,
+        nextQuestion: {
+          _id: nextQuestion._id,
+          questionText: nextQuestion.questionText,
+          options: nextQuestion.options,
+          correctAnswerIndex: nextQuestion.correctAnswerIndex,
+          mediaUrl: nextQuestion.mediaUrl,
+          mediaType: nextQuestion.mediaType
+        },
+        progress: {
+          currentQuestion: nextQuestionIndex + 1,
+          totalQuestions: 10
+        }
+      };
+    }
     
     return {
       isCorrect,
       nextQuestion: {
-        _id: nextQuestion._id,
-        questionText: nextQuestion.questionText,
-        options: nextQuestion.options,
-        mediaUrl: nextQuestion.mediaUrl,
-        mediaType: nextQuestion.mediaType
+        _id: nextShuffledQuestion._id,
+        questionText: nextShuffledQuestion.questionText,
+        options: nextShuffledQuestion.options,
+        correctAnswerIndex: nextShuffledQuestion.correctAnswerIndex,
+        mediaUrl: nextShuffledQuestion.mediaUrl,
+        mediaType: nextShuffledQuestion.mediaType
       },
       progress: {
         currentQuestion: nextQuestionIndex + 1,
