@@ -34,6 +34,8 @@ const QuizPage = () => {
   const [timeRemaining, setTimeRemaining] = useState(20)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showExitDialog, setShowExitDialog] = useState(false)
+  const [showFeedback, setShowFeedback] = useState(false)
+  const [lastAnswerResult, setLastAnswerResult] = useState(null)
 
   const currentQuestion = quizData?.questions?.[currentQuestionIndex]
   const progress = ((currentQuestionIndex + 1) / (quizData?.totalQuestions || 10)) * 100
@@ -95,23 +97,36 @@ const QuizPage = () => {
       })
 
       const result = response.data.data
-
-      if (result.nextQuestion) {
-        // Move to next question
-        const updatedQuestions = [...quizData.questions]
-        updatedQuestions[currentQuestionIndex + 1] = result.nextQuestion
+      
+      // Show feedback for 2 seconds
+      setLastAnswerResult({
+        isCorrect: result.isCorrect,
+        selectedIndex: answerIndex,
+        correctIndex: currentQuestion.correctAnswerIndex
+      })
+      setShowFeedback(true)
+      
+      setTimeout(() => {
+        setShowFeedback(false)
+        setLastAnswerResult(null)
         
-        setQuizData(prev => ({
-          ...prev,
-          questions: updatedQuestions
-        }))
-        setCurrentQuestionIndex(prev => prev + 1)
-      } else {
-        // Quiz completed
-        navigate(`/results/${quizData.quizAttemptId}`, {
-          state: { results: result }
-        })
-      }
+        if (result.nextQuestion) {
+          // Move to next question
+          const updatedQuestions = [...quizData.questions]
+          updatedQuestions[currentQuestionIndex + 1] = result.nextQuestion
+          
+          setQuizData(prev => ({
+            ...prev,
+            questions: updatedQuestions
+          }))
+          setCurrentQuestionIndex(prev => prev + 1)
+        } else {
+          // Quiz completed
+          navigate(`/results/${quizData.quizAttemptId}`, {
+            state: { results: result }
+          })
+        }
+      }, 2000)
     } catch (error) {
       throw error
     }
@@ -189,36 +204,63 @@ const QuizPage = () => {
                 value={selectedAnswer}
                 onChange={(e) => setSelectedAnswer(e.target.value)}
               >
-                {currentQuestion.options.map((option, index) => (
-                  <FormControlLabel
-                    key={index}
-                    value={index.toString()}
-                    control={<Radio />}
-                    label={option}
-                    sx={{ 
-                      mb: 1,
-                      p: 2,
-                      border: '1px solid #e0e0e0',
-                      borderRadius: 1,
-                      '&:hover': {
-                        backgroundColor: '#f5f5f5'
-                      }
-                    }}
-                  />
-                ))}
+                {currentQuestion.options.map((option, index) => {
+                  let backgroundColor = 'transparent'
+                  let borderColor = '#e0e0e0'
+                  
+                  if (showFeedback && lastAnswerResult) {
+                    if (index === lastAnswerResult.correctIndex) {
+                      backgroundColor = '#e8f5e8'
+                      borderColor = '#4caf50'
+                    } else if (index === lastAnswerResult.selectedIndex && !lastAnswerResult.isCorrect) {
+                      backgroundColor = '#ffebee'
+                      borderColor = '#f44336'
+                    }
+                  }
+                  
+                  return (
+                    <FormControlLabel
+                      key={index}
+                      value={index.toString()}
+                      control={<Radio />}
+                      label={option}
+                      disabled={showFeedback}
+                      sx={{ 
+                        mb: 1,
+                        p: 2,
+                        border: `1px solid ${borderColor}`,
+                        borderRadius: 1,
+                        backgroundColor,
+                        '&:hover': {
+                          backgroundColor: showFeedback ? backgroundColor : '#f5f5f5'
+                        }
+                      }}
+                    />
+                  )
+                })}
               </RadioGroup>
             </FormControl>
 
             <Box sx={{ mt: 4, textAlign: 'center' }}>
-              <Button
-                variant="contained"
-                size="large"
-                onClick={handleAnswerSubmit}
-                disabled={selectedAnswer === '' || isSubmitting || timeRemaining === 0}
-                sx={{ minWidth: 200 }}
-              >
-                {isSubmitting ? 'Submitting...' : 'Submit Answer'}
-              </Button>
+              {showFeedback ? (
+                <Typography 
+                  variant="h6" 
+                  color={lastAnswerResult?.isCorrect ? 'success.main' : 'error.main'}
+                  sx={{ mb: 2 }}
+                >
+                  {lastAnswerResult?.isCorrect ? '✓ Correct!' : '✗ Incorrect'}
+                </Typography>
+              ) : (
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={handleAnswerSubmit}
+                  disabled={selectedAnswer === '' || isSubmitting || timeRemaining === 0}
+                  sx={{ minWidth: 200 }}
+                >
+                  {isSubmitting ? 'Submitting...' : 'Submit Answer'}
+                </Button>
+              )}
             </Box>
 
             {timeRemaining <= 5 && (
