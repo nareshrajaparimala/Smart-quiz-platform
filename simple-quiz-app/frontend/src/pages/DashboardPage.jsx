@@ -56,11 +56,14 @@ const DashboardPage = () => {
 
   const handleStartQuiz = async (topicId) => {
     try {
+      console.log('Starting quiz for topic:', topicId)
       const response = await quizService.startQuiz(topicId)
+      console.log('Quiz started successfully:', response.data)
       navigate(`/quiz/${topicId}`, { 
         state: { quizData: response.data.data } 
       })
     } catch (error) {
+      console.error('Quiz start error:', error)
       toast.error(error.response?.data?.error?.message || 'Failed to start quiz')
     }
   }
